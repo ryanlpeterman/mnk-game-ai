@@ -1,5 +1,10 @@
-#!/usr/bin/python3.5
+#!/usr/bin/python
 
+import player
+
+def main():
+	# main loop game code here
+	print("TODO")
 
 if __name__ == '__main__':
-    print("executed as script")
+    main()
