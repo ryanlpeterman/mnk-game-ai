@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 class Board:
 	DIMENSION = 3
@@ -13,18 +14,32 @@ class Board:
 
 	def display(self):
 		"""display the entire grid"""
-		print self.board
+		sys.stdout.write('\n-------\n')
+
+		for row in self.board:
+			sys.stdout.write('|')
+
+			for elem in row:
+				char = ' '
+				if elem == 0:
+					char = 'X'
+				elif elem == 1:
+					char = 'O'
+
+				sys.stdout.write(char + '|')
+			sys.stdout.write('\n-------\n')
 
 	def checkMove(self, x, y):
 		"""verify if it's a correct move,
 		return true if it's a valid move"""
-		if x >= self.DIMENSION or x < 0 or \
-		   y >= self.DIMENSION or y < 0:
-			print "input ouf of bounds"
+		if x >= self.DIMENSION or x < 0 or y >= self.DIMENSION or y < 0:
+			print "Input out of Bounds"
 			return False
+
 		if self.board[x][y] != -1:
-			print "slot already taken"
+			print "Slot already taken"
 			return False
+
 		return True
 
 	def setMove(self, x, y, tick):
