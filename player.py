@@ -3,6 +3,7 @@ import numpy as np
 import random as rand
 import cmath as math
 import copy
+from operator import itemgetter
 
 class Player:
 	__metaclass__ = ABCMeta
@@ -27,6 +28,7 @@ class HumanPlayer(Player):
 			print("Enter Y Coord (1-3)")
 			y = int(raw_input()) - 1
 
+		# switched to align with display
 		return x, y
 
 class RandomAIPlayer(Player):
@@ -70,11 +72,16 @@ class MediumAIPlayer(AI):
 		self.marker = tick
 
 	def eval(self, board, curr_tick):
-		# TODO: we need some notion of good over and bad over
+		# curr player wins
 		if board.isOver() == curr_tick:
+			return 2
+		# other person wins
+		elif board.isOver() == (1 - curr_tick):
+			return -1
+		# cats game
+		elif board.isOver() == 2:
 			return 1
-		# elif board.isOver() == not self.marker:
-			# return -1
+		# don't know who wins
 		else:
 			return 0
 
@@ -92,12 +99,16 @@ class MediumAIPlayer(AI):
 			x, y = move
 			newBoard = copy.deepcopy(board)
 			newBoard.setMove(x ,y, curr_tick)
-			if self.eval(newBoard, curr_tick) == 1:
-				return x, y
+			# add ratings to moves
+			if self.eval(newBoard, curr_tick) != 0:
+				ratings.append(((x,y), self.eval(newBoard, curr_tick)))
+			# don't know who wins recurse to find
 			else:
-				return self.minimax(newBoard, not curr_tick)
+				ratings.append(self.minimax(newBoard, (1 - curr_tick)))
 
-		# no valid moves found
+		# pick the best move
+		return max(ratings, key=itemgetter(1))
 
 	def make_move(self, board):
-		return self.minimax(board, self.marker)
+		move, rating = self.minimax(board, self.marker)
+		return move

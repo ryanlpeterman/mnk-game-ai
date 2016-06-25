@@ -7,8 +7,8 @@ def main():
 
 	brd = board.Board()
 
-	p1 = player.MediumAIPlayer(0)
-	p2 = player.RandomAIPlayer(1)
+	p2 = player.MediumAIPlayer(0)
+	p1 = player.HumanPlayer(1)
 
 	curr_p = p1
 
