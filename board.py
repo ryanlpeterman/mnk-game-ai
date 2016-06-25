@@ -18,8 +18,12 @@ class Board:
 	def checkMove(self, x, y):
 		"""verify if it's a correct move,
 		return true if it's a valid move"""
+		if x >= self.DIMENSION or x < 0 or \
+		   y >= self.DIMENSION or y < 0:
+			print "input ouf of bounds"
+			return False
 		if self.board[x][y] != -1:
-			print "invalid move"
+			print "slot already taken"
 			return False
 		return True
 

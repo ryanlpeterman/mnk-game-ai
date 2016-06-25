@@ -15,7 +15,6 @@ def main():
 	while not brd.isOver():
 
 		brd.display()
-		print "TESTICLE"
 		x, y = curr_p.make_move(brd)
 		brd.setMove(x, y, curr_p.marker)
 
