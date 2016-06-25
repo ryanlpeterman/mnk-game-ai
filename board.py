@@ -15,7 +15,8 @@ class Board:
 		print "TODO"
 
 	def checkMove(self, x, y):
-		"""verify if it's a correct move"""
+		"""verify if it's a correct move,
+		return true if it's a valid move"""
 		print "TODO"
 
 	def setMove(self, x, y, tick):
