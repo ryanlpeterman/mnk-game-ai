@@ -7,13 +7,13 @@ def main():
 
 	brd = board.Board()
 
-	p1 = player.HumanPlayer(0)
-	p2 = player.HumanPlayer(1)
+	p1 = player.EasyAIPlayer(0)
+	p2 = player.EasyAIPlayer(1)
 
 	curr_p = p1
 
 	while not brd.isOver():
-
+		print "Player " + str(curr_p.marker) + "'s move...",
 		brd.display()
 		x, y = curr_p.make_move(brd)
 		brd.setMove(x, y, curr_p.marker)

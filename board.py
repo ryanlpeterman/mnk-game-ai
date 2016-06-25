@@ -37,7 +37,7 @@ class Board:
 			return False
 
 		if self.board[x][y] != -1:
-			print "Slot already taken"
+			#print "Slot already taken"
 			return False
 
 		return True
