@@ -29,7 +29,7 @@ class HumanPlayer(Player):
 
 		return x, y
 
-class EasyAIPlayer(Player):
+class RandomAIPlayer(Player):
 	def __init__(self, tick):
 		self.marker = tick #marker to identfy this player
 
@@ -38,16 +38,16 @@ class EasyAIPlayer(Player):
 		choose an open slot"""
 		openslots = np.full(9, 0, dtype=int) #-1 is invalid slots
 		counter = 0 #index to keep track of open slots
-		
+
 		#traversing the board to look for free slots
 		for i in range(0, board.DIMENSION):
 			for j in range(0, board.DIMENSION):
 				if (board.checkMove(i, j)):
 					openslots[counter] = counter
 				counter = counter + 1
-		
-		#randomly choose an index that's free	
-		#only consider free slots (nonzero)	
+
+		#randomly choose an index that's free
+		#only consider free slots (nonzero)
 		openslots = openslots[np.nonzero(openslots)]
 		#grabs a random index of these open slots
 		if len(openslots) == 0:
@@ -55,17 +55,26 @@ class EasyAIPlayer(Player):
 		index = rand.randrange(0, len(openslots))
 		#grab the grid coordinate of this open slot
 		slot = openslots[index]
-	
+
 		return int(slot/3), slot%3
 
-class HardAIPlayer(Player):
+class AI(Player):
+	__metaclass__ = ABCMeta
+
+	@abstractmethod
+	def eval(self, board): pass
+
+
+class MediumAIPlayer(AI):
 	def __init__(self, tick):
 		self.marker = tick
 
-	def eval(self, board):
+	def eval(self, board, curr_tick):
 		# TODO: we need some notion of good over and bad over
-		if board.isOver():
+		if board.isOver() == curr_tick:
 			return 1
+		# elif board.isOver() == not self.marker:
+			# return -1
 		else:
 			return 0
 
@@ -77,16 +86,18 @@ class HardAIPlayer(Player):
 			for j in range(board.DIMENSION):
 				if board.checkMove(i, j):
 					valid_moves.append((i,j))
-
+		ratings = []
 		# make each move
 		for move in valid_moves:
 			x, y = move
 			newBoard = copy.deepcopy(board)
 			newBoard.setMove(x ,y, curr_tick)
-			if self.eval(newBoard) == 1:
+			if self.eval(newBoard, curr_tick) == 1:
 				return x, y
 			else:
 				return self.minimax(newBoard, not curr_tick)
+
+		# no valid moves found
 
 	def make_move(self, board):
 		return self.minimax(board, self.marker)

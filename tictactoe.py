@@ -7,12 +7,12 @@ def main():
 
 	brd = board.Board()
 
-	p1 = player.EasyAIPlayer(0)
-	p2 = player.EasyAIPlayer(1)
+	p1 = player.MediumAIPlayer(0)
+	p2 = player.RandomAIPlayer(1)
 
 	curr_p = p1
 
-	while not brd.isOver():
+	while brd.isOver() == -1:
 		print "Player " + str(curr_p.marker) + "'s move...",
 		brd.display()
 		x, y = curr_p.make_move(brd)
@@ -26,6 +26,12 @@ def main():
 
 	brd.display()
 	print "Game Over!"
+	if brd.isOver() == 2:
+		print "Cat's Game"
+	elif brd.isOver() == 1:
+		print "Player O Wins!!"
+	elif brd.isOver() == 0:
+		print "Player X Wins!!"
 
 if __name__ == '__main__':
     main()

@@ -47,25 +47,34 @@ class Board:
 		self.board[x][y] = tick
 
 	def isOver(self):
-		"""returns true if game is over else false"""
+		"""returns element causing game over or 2 if cats game"""
+		CATS_GAME = 2
+		GAME_ONGOING = -1
+
 		check_func = lambda arr: arr[0] != -1 and all(elem == arr[0] for elem in arr)
 
 		# all same marker in a row
 		for row in self.board:
 			if check_func(row):
-				return True
+				return row[0]
 
 		# all same marker in a col
 		for col in [self.board[:,idx] for idx in range(self.DIMENSION)]:
 			if check_func(col):
-				return True
+				return col[0]
 
 		# check pos_diag
-		if check_func(self.board.diagonal()):
-			return True
+		pos_diag = self.board.diagonal()
+		neg_diag = [self.board[idx][(self.DIMENSION - 1) - idx] for idx in range(self.DIMENSION)]
+		if check_func(pos_diag):
+			return pos_diag[0]
 		# check neg_diag
-		elif check_func([self.board[idx][(self.DIMENSION - 1) - idx] for idx in range(self.DIMENSION)]):
-			return True
+		elif check_func(neg_diag):
+			return neg_diag[0]
 
 		# cats game
-		return np.count_nonzero(self.board == -1) == 0
+		if np.count_nonzero(self.board == -1) == 0:
+			return CATS_GAME
+		
+		# game not over
+		return GAME_ONGOING	
