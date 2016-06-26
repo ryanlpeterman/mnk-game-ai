@@ -17,19 +17,11 @@ class HumanPlayer(Player):
 
 	def make_move(self, board):
 		"""Prompts user for 1 indexed move"""
-		print("Enter X Coord (1-3)")
-		x = int(raw_input()) - 1
-		print("Enter Y Coord (1-3)")
-		y = int(raw_input()) - 1
-
-		while not board.checkMove(x,y):
-			print("Enter X Coord (1-3)")
-			x = int(raw_input()) - 1
-			print("Enter Y Coord (1-3)")
-			y = int(raw_input()) - 1
-
-		# switched to align with display
-		return x, y
+		print("Enter Row Num (1-3)")
+		row = int(raw_input()) - 1
+		print("Enter Col Num (1-3)")
+		col = int(raw_input()) - 1
+		return row, col
 
 class RandomAIPlayer(Player):
 	def __init__(self, tick):
@@ -66,30 +58,32 @@ class AI(Player):
 	@abstractmethod
 	def eval(self, board): pass
 
-
 class MediumAIPlayer(AI):
 	def __init__(self, tick):
 		self.marker = tick
 
 	def eval(self, board, depth):
-		# curr player wins
+		# over due to AI player winning
 		if board.isOver() == self.marker:
-			return 10
-		# other person wins
+			return depth
+		# over due to other player winning
 		elif board.isOver() == (1 - self.marker):
-			return -10
+			return -depth
 		# don't know who wins or tie
-		else:
+		elif board.isOver() == 2:
 			return 0
+		# not over
+		else:
+			return None
 
 	def minimax(self, board, curr_tick, depth):
 		# get a list of valid moves
-		depth += 1
 		valid_moves = []
 		for i in range(board.DIMENSION):
 			for j in range(board.DIMENSION):
 				if board.checkMove(i, j):
 					valid_moves.append((i,j))
+
 		ratings = []
 		# make each move
 		for move in valid_moves:
@@ -97,20 +91,23 @@ class MediumAIPlayer(AI):
 			newBoard = copy.deepcopy(board)
 			newBoard.setMove(x ,y, curr_tick)
 			# add ratings to moves
-			if self.eval(newBoard, depth) != 0:
-				ratings.append(((x,y), self.eval(newBoard, depth)))
+			tmp = self.eval(newBoard, depth)
+			if tmp != None:
+				ratings.append(((x,y), tmp))
 			# don't know who wins recurse to find
 			else:
-				ratings.append(self.minimax(newBoard, (1 - curr_tick), depth))
+				result = self.minimax(newBoard, (1 - curr_tick), depth - 1)
+				# if there were valid rated moves
+				if result:
+					# append the move that caused the result rating
+					ratings.append((move, result[1]))
 
-		# pick the best move
-		if not ratings:
-			return ((-1, -1), 0)#no valid moves
-		if curr_tick == 1:
-			return max(ratings, key=itemgetter(1))
-		else:
-			return min(ratings, key=itemgetter(1))
+		if ratings:
+			if curr_tick == self.marker:
+				return max(ratings, key=itemgetter(1))
+			else:
+				return min(ratings, key=itemgetter(1))
 
 	def make_move(self, board):
-		move, rating = self.minimax(board, self.marker, 0)
+		move, rating = self.minimax(board, self.marker, 10)
 		return move

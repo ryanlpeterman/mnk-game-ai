@@ -29,23 +29,22 @@ class Board:
 				sys.stdout.write(char + '|')
 			sys.stdout.write('\n-------\n')
 
-	def checkMove(self, x, y):
+	def checkMove(self, row, col):
 		"""verify if it's a correct move,
 		return true if it's a valid move"""
-		if (x >= self.DIMENSION or x < 0) and (y >= self.DIMENSION or y < 0):
+		if row >= self.DIMENSION or row < 0 or col >= self.DIMENSION or col < 0:
 			print "Input out of Bounds"
 			return False
 
-		if self.board[x][y] != -1:
+		if self.board[row][col] != -1:
 			#print "Slot already taken"
 			return False
 
 		return True
 
-	def setMove(self, x, y, tick):
+	def setMove(self, row, col, tick):
 		"""sets a valid move on the grid"""
-		print "moved to" + str(x) + " " + str(y)
-		self.board[x][y] = tick
+		self.board[row][col] = tick
 
 	def isOver(self):
 		"""returns element causing game over or 2 if cats game"""
@@ -76,6 +75,6 @@ class Board:
 		# cats game
 		if np.count_nonzero(self.board == -1) == 0:
 			return CATS_GAME
-		
+
 		# game not over
-		return GAME_ONGOING	
+		return GAME_ONGOING
