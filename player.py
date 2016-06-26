@@ -71,13 +71,13 @@ class MediumAIPlayer(AI):
 	def __init__(self, tick):
 		self.marker = tick
 
-	def eval(self, board, curr_tick, depth):
+	def eval(self, board, depth):
 		# curr player wins
-		if board.isOver() == curr_tick:
-			return 10+depth
+		if board.isOver() == self.marker:
+			return 10
 		# other person wins
-		elif board.isOver() == (1 - curr_tick):
-			return depth-10
+		elif board.isOver() == (1 - self.marker):
+			return -10
 		# don't know who wins or tie
 		else:
 			return 0
@@ -97,16 +97,19 @@ class MediumAIPlayer(AI):
 			newBoard = copy.deepcopy(board)
 			newBoard.setMove(x ,y, curr_tick)
 			# add ratings to moves
-			if self.eval(newBoard, curr_tick, depth) != 0:
-				ratings.append(((x,y), self.eval(newBoard, curr_tick, depth)))
+			if self.eval(newBoard, depth) != 0:
+				ratings.append(((x,y), self.eval(newBoard, depth)))
 			# don't know who wins recurse to find
 			else:
 				ratings.append(self.minimax(newBoard, (1 - curr_tick), depth))
 
 		# pick the best move
 		if not ratings:
-			return ((-1, -1), -100)#no valid moves
-		return max(ratings, key=itemgetter(1))
+			return ((-1, -1), 0)#no valid moves
+		if curr_tick == 1:
+			return max(ratings, key=itemgetter(1))
+		else:
+			return min(ratings, key=itemgetter(1))
 
 	def make_move(self, board):
 		move, rating = self.minimax(board, self.marker, 0)

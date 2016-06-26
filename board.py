@@ -32,7 +32,7 @@ class Board:
 	def checkMove(self, x, y):
 		"""verify if it's a correct move,
 		return true if it's a valid move"""
-		if x >= self.DIMENSION or x < 0 or y >= self.DIMENSION or y < 0:
+		if (x >= self.DIMENSION or x < 0) and (y >= self.DIMENSION or y < 0):
 			print "Input out of Bounds"
 			return False
 
@@ -44,6 +44,7 @@ class Board:
 
 	def setMove(self, x, y, tick):
 		"""sets a valid move on the grid"""
+		print "moved to" + str(x) + " " + str(y)
 		self.board[x][y] = tick
 
 	def isOver(self):

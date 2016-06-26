@@ -7,24 +7,24 @@ def main():
 
 	dumbcnt = 0
 	smartcnt = 0
-	for ite in range(0, 10):
+	for ite in range(0, 50):
 		brd = board.Board()
 		p2 = player.MediumAIPlayer(0)
 		p1 = player.HumanPlayer(1)
 
-		curr_p = p1
+		brd.curr_p = p1
 
 		while brd.isOver() == -1:
-			print "Player " + str(curr_p.marker) + "'s move...",
+			print "Player " + str(brd.curr_p.marker) + "'s move...",
 			brd.display()
-			x, y = curr_p.make_move(brd)
-			brd.setMove(x, y, curr_p.marker)
+			x, y = brd.curr_p.make_move(brd)
+			brd.setMove(x, y, brd.curr_p.marker)
 
 			# switch players
-			if curr_p == p1:
-				curr_p = p2
+			if brd.curr_p == p1:
+				brd.curr_p = p2
 			else:
-				curr_p = p1
+				brd.curr_p = p1
 
 		brd.display()
 		print "Game Over!"
