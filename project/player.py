@@ -106,7 +106,7 @@ class PerfectAIPlayer(Player):
         else:
             return None
 
-    def minimax(self, board, curr_marker, depth):
+    def minimax(self, board, curr_marker, depth, p_alpha, p_beta):
         """ Returns the best move from the perspective of the current player
 
         Args:
@@ -126,32 +126,66 @@ class PerfectAIPlayer(Player):
                     valid_moves.append((row, col))
 
         ratings = []
-        # make each move
+        
+	# initialization for alpha / beta pruning
+	# will alter each of these as I call each child
+	alpha = p_alpha
+	beta = p_beta
+	# want to keep track of which node we are on
+	is_max_node = (self.marker == curr_marker)
+
+	# make each move
         for move in valid_moves:
-            row, col = move
+            # pruning the tree, no possible better solution here
+ 	    if alpha >= beta:
+	        if is_max_node:
+		    return (max(ratings, key=itemgetter(1))[0], alpha)
+	        else:
+		    return (min(ratings, key=itemgetter(1))[0], beta)
+		
+	    row, col = move
             new_board = copy.deepcopy(board)
             new_board.setMove(row, col, curr_marker)
             # add ratings to moves
             tmp = self.eval(new_board, depth)
+	    # if it's possible to evaluate the board...
             if tmp != None:
                 ratings.append(((row, col), tmp))
+	        if is_max_node:
+		    # we are at a max mode, want to return max lower bound of solutions
+		    if tmp > alpha:
+		        alpha = tmp #update alpha as the max lower bound
+	        else:
+		    # we are at a min node, want to return min upper bound of solutions
+		    if tmp < beta:
+		        beta = tmp #update beta as the min upper bound
+ 		
             # don't know who wins recurse to find
             else:
-                result = self.minimax(new_board, (1 - curr_marker), depth - 1)
+                result = self.minimax(new_board, (1 - curr_marker), depth - 1, alpha, beta)
+		# we want to re-evaluate alpha / beta based on children...same logic as above
+		tmp = result[1] 
+		if is_max_node:
+		    if tmp > alpha:
+			alpha = tmp
+		else:
+		    if tmp < beta:
+			beta = tmp
                 # if there were valid rated moves
                 if result:
                     # append the move that caused the result rating
                     ratings.append((move, result[1]))
+		
 
         if ratings:
-            if curr_marker == self.marker:
-                return max(ratings, key=itemgetter(1))
+            if is_max_node:
+		return (max(ratings, key=itemgetter(1))[0], alpha)
             else:
-                return min(ratings, key=itemgetter(1))
+		return (min(ratings, key=itemgetter(1))[0], beta)
 
     def make_move(self, board):
         """
         Wrapper interface for minimax function
         """
-        move, _ = self.minimax(board, self.marker, 10)
+        move, _ = self.minimax(board, self.marker, 10, -10000, 10000)
         return move

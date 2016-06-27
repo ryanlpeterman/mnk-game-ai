@@ -13,14 +13,13 @@ def game():
     for _ in range(0, 5):
         brd = board.Board()
         player2 = player.PerfectAIPlayer(0)
-        player1 = player.RandomAIPlayer(1)
+        player1 = player.HumanPlayer(1)
 
         curr_player = player1
 
         while brd.isOver() == -1:
             print "Player " + str(curr_player.marker) + "'s move...",
             brd.display()
-
             row, col = curr_player.make_move(brd)
 
             while not brd.checkMove(row, col):
