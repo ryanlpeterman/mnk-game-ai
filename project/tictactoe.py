@@ -13,11 +13,8 @@ def game(player1_type, player2_type, num_games=1):
     player2_type += 'Player'
 
     # get constructor of player based on command line argument
-    # player1 = getattr(player, player1_type)(1)
-    # player2 = getattr(player, player2_type)(0)
-    player1 = player.RandomAIPlayer(1)
-    player2 = player.PerfectAIPlayer(0)
-
+    player1 = getattr(player, player1_type)(1)
+    player2 = getattr(player, player2_type)(0)
 
     p1_win_cnt = 0
     p2_win_cnt = 0
