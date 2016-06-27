@@ -10,10 +10,10 @@ def game():
     """
     dumbcnt = 0
     smartcnt = 0
-    for _ in range(0, 5):
+    for _ in range(0, 10):
         brd = board.Board()
         player2 = player.PerfectAIPlayer(0)
-        player1 = player.HumanPlayer(1)
+        player1 = player.PerfectAIPlayer(1)
 
         curr_player = player1
 
