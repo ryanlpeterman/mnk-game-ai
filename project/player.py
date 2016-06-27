@@ -177,11 +177,11 @@ class PerfectAIPlayer(Player):
                     # append the move that caused the result rating
                     ratings.append((move, result[1]))
 
-            if ratings:
-                if is_max_node:
-                    return (max(ratings, key=itemgetter(1))[0], alpha)
-                else:
-                    return (min(ratings, key=itemgetter(1))[0], beta)
+        if ratings:
+            if is_max_node:
+                return (max(ratings, key=itemgetter(1))[0], alpha)
+            else:
+                return (min(ratings, key=itemgetter(1))[0], beta)
 
     def make_move(self, board):
         """
