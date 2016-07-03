@@ -6,8 +6,10 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
 import sys
+import json
 sys.path.append('./src/server')
 import board as brd
+import player
 
 app = Flask(__name__)
 CORS(app)
@@ -24,13 +26,31 @@ def getMove():
     """
     returns a move based on board passed in
     """
-    # data = request.form.getlist('board', type=int)
-    # print data
-    # cnv_to_int = [int(x) for x in data['board']]
-    # curr_brd = brd.Board(cnv_to_int)
+    # board passed in from post req
+    curr_brd = brd.Board(json.loads(request.form['board']))
 
-    # return curr_brd.board
-    return "Hi you wanted a move huh?"
+    response = {"row": -1, "col": -1}
+    result = curr_brd.isOver()
+    # game is over
+    if result != -1:
+        if result== 2:
+            response["winner"] = "cat's game"
+        elif result== 0:
+            response["winner"] = "human"
+
+        return json.dumps(response)
+    else:
+        computer_player = player.PerfectAIPlayer(1)
+        row, col = computer_player.make_move(curr_brd)
+        curr_brd.setMove(row, col, 1)
+
+    # if move caused win for computer
+    if curr_brd.isOver() == 1:
+        response["winner"] = "computer"
+
+    response["row"] = row
+    response["col"] = col
+    return json.dumps(response)
 
 if __name__ == "__main__":
     app.run(debug=True)
