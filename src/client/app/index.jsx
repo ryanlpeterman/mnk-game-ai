@@ -1,9 +1,12 @@
 import React from 'react';
 import {render} from 'react-dom';
 
+import Board from './components/Board';
+
+
 class App extends React.Component {
   render () {
-    return <p> Hello React!</p>;
+    return <Board/>;
   }
 }
 
