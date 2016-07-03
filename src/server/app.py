@@ -2,7 +2,6 @@
 Flask server code to host the react front end that displays the
 Tic Tac Toe output
 """
-import os
 from flask import Flask
 # import tictactoe as tic
 
@@ -15,6 +14,13 @@ def hello():
     """
     return "Hello world!"
 
+@app.route('/<name>')
+def hello_name(name):
+    """
+    outputs name
+    """
+    return "Hello {}!".format(name)
+
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 80))
-    app.run(host='0.0.0.0', port=port)
+    app.run()
