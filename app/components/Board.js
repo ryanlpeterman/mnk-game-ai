@@ -25,7 +25,7 @@ let Cell = React.createClass({displayName: 'Cell',
   render: function() {
 
     let markerView;
-
+    // TODO change this representation to 1,0, -1
     if (this.props.mark === 'X') {
       markerView =(
       <svg>
@@ -70,23 +70,45 @@ let Board = React.createClass({displayName: 'Board',
 		board[idx] = humanMark;
 		this.setState({board: board});
 
-		console.log(board);
-
+		let int_board = this.state.board.map(
+			function(char){
+				if (char === 'O')
+					return 1
+				else if (char === 'X')
+					return 0
+				else
+					return -1
+			}
+		)
+		console.log(int_board);
 		// make api call to get computer move
 		var http = new XMLHttpRequest();
 		var url = "http://127.0.0.1:5000/api/board"
-		var params = "none=rn"
 
 		http.open("POST", url);
 		//Send the proper header information along with the request
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		http.setRequestHeader("Access-Control-Allow-Origin", "*");
+		var me = this;
 		http.onreadystatechange = function() {//Call a function when the state changes.
 		    if(http.readyState == 4 && http.status == 200) {
-		        alert(http.responseText);
+		        let res = JSON.parse(http.responseText);
+
+		        // if valid move passed back then update views
+		        if (res.row != -1 && res.col != -1) {
+			        let board = me.state.board;
+			        board[res.col + res.row*3] = computerMark;
+			        me.setState({board: board});
+		    	}
+
+		    	// if winner was declared, declare it
+		        if(res.winner != undefined){
+		        	alert(res.winner)
+		        }
 		    }
 		}
-		http.send(params);
+
+		http.send("board=" + JSON.stringify(int_board));
 	},
 
 	render: function() {
