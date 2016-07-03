@@ -2,10 +2,15 @@
 Flask server code to host the react front end that displays the
 Tic Tac Toe output
 """
-from flask import Flask
-# import tictactoe as tic
+from flask import Flask, request
+from flask_cors import CORS, cross_origin
+
+import sys
+sys.path.append('./src/server')
+import board as brd
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def hello():
@@ -14,13 +19,18 @@ def hello():
     """
     return "Hello world!"
 
-@app.route('/<name>')
-def hello_name(name):
+@app.route('/api/board', methods=['POST'])
+def getMove():
     """
-    outputs name
+    returns a move based on board passed in
     """
-    return "Hello {}!".format(name)
+    # data = request.form.getlist('board', type=int)
+    # print data
+    # cnv_to_int = [int(x) for x in data['board']]
+    # curr_brd = brd.Board(cnv_to_int)
 
+    # return curr_brd.board
+    return "Hi you wanted a move huh?"
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

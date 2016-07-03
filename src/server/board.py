@@ -18,6 +18,12 @@ class Board:
         self.board = np.zeros(shape=(3, 3))
         self.board.fill(-1)
 
+    def __init__(self, board_arr):
+        """
+        initalizes board based on given flattened array
+        """
+        self.board = np.array(board_arr).reshape((self.DIMENSION, self.DIMENSION))
+
     def display(self):
         """
         display the entire grid

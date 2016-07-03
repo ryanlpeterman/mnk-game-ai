@@ -73,7 +73,20 @@ let Board = React.createClass({displayName: 'Board',
 		console.log(board);
 
 		// make api call to get computer move
-		// TODO: Post request here
+		var http = new XMLHttpRequest();
+		var url = "http://127.0.0.1:5000/api/board"
+		var params = "none=rn"
+
+		http.open("POST", url);
+		//Send the proper header information along with the request
+		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		http.setRequestHeader("Access-Control-Allow-Origin", "*");
+		http.onreadystatechange = function() {//Call a function when the state changes.
+		    if(http.readyState == 4 && http.status == 200) {
+		        alert(http.responseText);
+		    }
+		}
+		http.send(params);
 	},
 
 	render: function() {
