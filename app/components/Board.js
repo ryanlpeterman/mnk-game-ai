@@ -51,7 +51,11 @@ let Cell = React.createClass({displayName: 'Cell',
 let Board = React.createClass({displayName: 'Board',
 
 	boardStyle: {
-		width: 300
+		width: 300,
+		height: 300,
+		margin: 'auto',
+  		position: 'absolute',
+  		top: 0, left: 0, bottom: 0, right: 0
 	},
 
 	getInitialState: function() {
