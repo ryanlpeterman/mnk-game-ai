@@ -83,7 +83,8 @@ let Board = React.createClass({displayName: 'Board',
 		console.log(int_board);
 		// make api call to get computer move
 		var http = new XMLHttpRequest();
-		var url = "http://127.0.0.1:5000/api/board"
+		// var url = "http://127.0.0.1:5000/api/board"
+		var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
 
 		http.open("POST", url);
 		//Send the proper header information along with the request
