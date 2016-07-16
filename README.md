@@ -1,28 +1,41 @@
-# Tic Tac Toe AI
+# M,N,K Game AI
 
-AI for Tic Tac Toe written in Python by Ryan Peterman and Scott Shi. Uses [Minimax Algorithm](https://en.wikipedia.org/wiki/Minimax) to explore possible game states. Applies [Alpha-Beta Pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning) to only explore necessary states. Deployed on Heroku using Flask. Front-end written in ReactJS.
+AI for a generic m,n,k game written in Python by Ryan Peterman and Scott Shi. Uses [Minimax Algorithm](https://en.wikipedia.org/wiki/Minimax) to explore possible game states. Applies [Alpha-Beta Pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning) to only explore necessary states. Deployed on Heroku using Flask. Front-end written in ReactJS.
 
 ## Usage
 * From command line:
 ```
-$ python project/tic-tac-toe.py
+$ python tic-tac-toe.py
 ```
-* From web: [https://tic-tac-toe-ai.herokuapp.com](tic-tac-toe-ai.herokuapp.com)
+* From web: [Current Link Here](http://www.rpeterman.me)
 
 ## Project file structure
 
 ```
-tic-tac-toe-ai/
-├── Procfile (For Heroku)
-├── project
-│   ├── app.py (Flask Server)
-│   ├── board.py
-│   ├── player.py
-│   └── tictactoe.py (Main)
+├── app.py
+├── package.json
+├── Procfile
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+├── src
+│   ├── client
+│   │   ├── app
+│   │   │   ├── components
+│   │   │   │   └── Board.js
+│   │   │   ├── index.jsx
+│   │   │   └── static
+│   │   ├── index.html
+│   │   └── public
+│   │       ├── bundle.js
+│   │       └── bundle.js.map
+│   └── server
+│       ├── board.py
+│       ├── player.py
+│       └── tictactoe.py
+└── webpack.config.js
 ```
 
 ## TODO
-1. Add command line flags to access different players and number of games
-2. Build out front end in ReactJS
+1. Generalize AI
+2. Set up front-end hosting separate from personal website
+3. Clean up backend response
