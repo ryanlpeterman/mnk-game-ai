@@ -1,4 +1,7 @@
 import React from 'react';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
+import RaisedButton from 'material-ui/RaisedButton';
+import Dialog from 'material-ui/Dialog';
 
 let humanMark = 'X';
 let computerMark = 'O';
@@ -53,22 +56,34 @@ let Board = React.createClass({displayName: 'Board',
 	boardStyle: {
 		width: 300,
 		height: 300,
-		margin: 'auto',
-  		position: 'absolute',
-  		top: 0, left: 0, bottom: 0, right: 0
+		position: 'absolute',
+        left:0, right:0,
+        top:0, bottom:0,
+        margin:'auto'
+	},
+
+	switchOpenState : function() {
+		this.setState({open: !(this.state.open)});
 	},
 
 	getInitialState: function() {
 		return {
 			board: [ ' ', ' ', ' '
 					,' ', ' ', ' '
-					,' ', ' ', ' ']}
+					,' ', ' ', ' '],
+			loader: 'hide',
+			open: false,
+			winner: undefined}
 	},
 
 	updateBoard : function (idx) {
+
+		// if board is loading, throw away click
+		if (this.state.loader === 'loading')
+			return;
 		var board = this.state.board;
 		board[idx] = humanMark;
-		this.setState({board: board});
+		this.setState({board: board, loader:'loading'});
 
 		let int_board = this.state.board.map(
 			function(char){
@@ -80,7 +95,7 @@ let Board = React.createClass({displayName: 'Board',
 					return -1
 			}
 		)
-		console.log(int_board);
+
 		// make api call to get computer move
 		var http = new XMLHttpRequest();
 		// var url = "http://127.0.0.1:5000/api/board"
@@ -99,12 +114,12 @@ let Board = React.createClass({displayName: 'Board',
 		        if (res.row != -1 && res.col != -1) {
 			        let board = me.state.board;
 			        board[res.col + res.row*3] = computerMark;
-			        me.setState({board: board});
+			        me.setState({board: board, loader:'hide'});
 		    	}
 
 		    	// if winner was declared, declare it
 		        if(res.winner != undefined){
-		        	alert(res.winner)
+		        	me.setState({board: me.state.board, loader:'hide', open: true, winner: res.winner});
 		        }
 		    }
 		}
@@ -122,8 +137,35 @@ let Board = React.createClass({displayName: 'Board',
 		};
 		// prepare cells
 		let cells = this.state.board.map(createCellFunc);
+
+		var actions = [
+	      <RaisedButton
+	        label="Close"
+	        secondary={true}
+	        onTouchTap={this.switchOpenState}
+	        style={{marginRight:20, marginBottom: 20}}
+	      />
+	    ];
 		return (
-			<div style={this.boardStyle}>{cells}</div>
+			<div style={this.boardStyle}>
+				{cells}
+				<RefreshIndicator
+					size={50}
+					left={-25}
+					top={300}
+					style={{marginLeft:"50%", pointerEvents:"none"}}
+					status={me.state.loader}
+				/>
+				<Dialog
+		          title={this.state.winner}
+		          actions={actions}
+		          autoDetectWindowHeight={true}
+		          modal={true}
+		          open={me.state.open}
+		          onRequestClose={me.switchOpenState}
+		        >
+		        </Dialog>
+			</div>
 		);
 	}
 });
