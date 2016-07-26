@@ -38,7 +38,7 @@ $ python tic-tac-toe.py
 ## M-N-K Generalization (In progress)
 1. Generalize Board:
   * Restrictions:
-   * K must be at least 2 (must match at least 2 in a row to win, else it's too easy)
+   * K must be at least 3 (must match at least 3 in a row to win, else it's too easy)
    * min(M, N) >= K (the smaller dimension of (M,N) must be greater than K to allow for a playable game
    * M, N must be less than 10 (just for your convenience...)
 
