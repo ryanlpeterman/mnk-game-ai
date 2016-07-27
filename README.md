@@ -42,7 +42,7 @@ $ python tic-tac-toe.py
    * min(M, N) >= K (the smaller dimension of (M,N) must be greater than K to allow for a playable game
    * M, N must be less than 10 (just for your convenience...)
 
-2. Refine Computation of Game States:
+2. CURRENT --> Refine Computation of Game States:
   * Create a general board checker for a NxN square board
   * For cases in which M != N, continuously pass in subsets of square boards to check game state
 
