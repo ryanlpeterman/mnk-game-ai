@@ -55,8 +55,8 @@ class RandomAIPlayer(Player):
         num_open = 0
 
         # traversing the board to look for free slots
-        for i in range(0, board.DIMENSION):
-            for j in range(0, board.DIMENSION):
+        for i in range(0, board.M):
+            for j in range(0, board.N):
                 if board.checkMove(i, j):
                     openslots[num_open] = num_open
                 num_open = num_open + 1
@@ -120,8 +120,8 @@ class PerfectAIPlayer(Player):
         """
         # get a list of valid moves
         valid_moves = []
-        for row in range(board.DIMENSION):
-            for col in range(board.DIMENSION):
+        for row in range(board.M):
+            for col in range(board.N):
                 if board.checkMove(row, col):
                     valid_moves.append((row, col))
 
