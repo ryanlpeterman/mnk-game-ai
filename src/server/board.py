@@ -90,8 +90,28 @@ class Board:
 
     def isOver(self):
         """
+        checks all iterations of the board to see if it's finished
+        """
+        catsgame = True #keeping track of if all the subboards that are cat's game'd
+        tempboard = np.zeros(shape=(self.K,self.K)) #temp square board to check game
+        for i in xrange(self.K, self.M + 1):
+            for j in xrange(self.K, self.N + 1):
+                tempboard = self.board[i-self.K:i,j-self.K:j]
+                ret = self.checkSquare(tempboard)
+                if ret != 2:
+                    catsgame = False #if any subboard returns a non-cat's game, it's not over
+                if ret != 2 and ret != -1:
+                    return ret #one of the players won the sub array
+        if catsgame == True:
+            return 2
+        return -1 #nobody won and it's not a cat's game
+                
+
+    def checkSquare(self, board):
+        """
         returns element causing game over or 2 if cats game
         """
+		
         CATS_GAME = 2
         GAME_ONGOING = -1
         
@@ -99,18 +119,18 @@ class Board:
         check_func = lambda arr: arr[0] != -1 and all(elem == arr[0] for elem in arr)
 
         # all same marker in a row
-        for row in self.board:
+        for row in board:
             if check_func(row):
                 return row[0]
 
         # all same marker in a col
-        for col in [self.board[:, idx] for idx in range(self.K)]:
+        for col in [board[:, idx] for idx in range(self.K)]:
             if check_func(col):
                 return col[0]
 
         # check pos_diag
-        pos_diag = self.board.diagonal()
-        neg_diag = [self.board[idx][(self.K - 1) - idx] for idx in range(self.K)]
+        pos_diag = board.diagonal()
+        neg_diag = [board[idx][(self.K - 1) - idx] for idx in range(self.K)]
         if check_func(pos_diag):
             return pos_diag[0]
         # check neg_diag
@@ -118,7 +138,7 @@ class Board:
             return neg_diag[0]
 
         # cats game
-        if np.count_nonzero(self.board == -1) == 0:
+        if np.count_nonzero(board == -1) == 0:
             return CATS_GAME
 
         # game not over
