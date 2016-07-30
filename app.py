@@ -14,39 +14,36 @@ import player
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/")
-def hello():
-    """
-    outputs hello world to screen for now
-    """
-    return "Hello world!"
-
 @app.route('/api/board', methods=['POST'])
 def getMove():
     """
     returns a move based on board passed in
     """
     # board passed in from post req
-    curr_brd = brd.Board(json.loads(request.form['board']))
+    curr_brd = brd.Board(json.loads(request.form['board']),
+            int(request.form['M']), int(request.form['N']), int(request.form['K']))
 
     response = {"row": -1, "col": -1}
     result = curr_brd.isOver()
+    print "result:", result
+
     # game is over
     if result != -1:
         if result== 2:
-            response["winner"] = "cat's game"
+            response["winner"] = "Cat's Game"
         elif result== 0:
-            response["winner"] = "human"
+            response["winner"] = "You win!"
 
         return json.dumps(response)
     else:
         computer_player = player.PerfectAIPlayer(1)
         row, col = computer_player.make_move(curr_brd)
+        print "r:", row, "c:", col
         curr_brd.setMove(row, col, 1)
 
     # if move caused win for computer
     if curr_brd.isOver() == 1:
-        response["winner"] = "computer"
+        response["winner"] = "Computer wins!"
 
     response["row"] = row
     response["col"] = col
