@@ -2,9 +2,8 @@ import React from 'react';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
-
-// potentially remove this
-import Paper from 'material-ui/Paper';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
@@ -82,6 +81,11 @@ let Board = React.createClass({displayName: 'Board',
         margin:'auto'
 	},
 
+	selectStyle: {
+		width: '40%',
+		display: 'block'
+	},
+
 	childContextTypes:{
 		muiTheme: React.PropTypes.object.isRequired,
 	},
@@ -95,6 +99,10 @@ let Board = React.createClass({displayName: 'Board',
 		this.setState({open: !(this.state.open)});
 	},
 
+	switchDimensionDiagState : function() {
+		this.setState({dim_open: !(this.state.dim_open)});
+	},
+
 	getInitialState: function() {
 		return {
 			board: [ ' ', ' ', ' '
@@ -102,13 +110,17 @@ let Board = React.createClass({displayName: 'Board',
 					,' ', ' ', ' '],
 			loader: 'hide',
 			open: false,
-			winner: undefined}
+			dim_open: false,
+			winner: undefined,
+			m: 3,
+			n: 3,
+			k: 3}
 	},
 
 	updateBoard : function (idx) {
 
 		// if board is loading, throw away click
-		if (this.state.loader === 'loading')
+		if (this.state.loader === 'loading' || this.state.winner !== undefined)
 			return;
 		var board = this.state.board;
 		board[idx] = humanMark;
@@ -127,8 +139,8 @@ let Board = React.createClass({displayName: 'Board',
 
 		// make api call to get computer move
 		var http = new XMLHttpRequest();
-		// var url = "http://127.0.0.1:5000/api/board"
-		var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
+		var url = "http://127.0.0.1:5000/api/board"
+		// var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
 
 		http.open("POST", url);
 		//Send the proper header information along with the request
@@ -153,7 +165,7 @@ let Board = React.createClass({displayName: 'Board',
 		    }
 		}
 
-		http.send("board=" + JSON.stringify(int_board));
+		http.send("board=" + JSON.stringify(int_board) + "&M=3&N=3&K=3");
 	},
 
 	render: function() {
@@ -167,7 +179,7 @@ let Board = React.createClass({displayName: 'Board',
 		// prepare cells
 		let cells = this.state.board.map(createCellFunc);
 
-		var actions = [
+		let actions = [
 	      <RaisedButton
 	        label="Close"
 	        secondary={true}
@@ -175,6 +187,26 @@ let Board = React.createClass({displayName: 'Board',
 	        style={{marginRight:20, marginBottom: 20}}
 	      />
 	    ];
+	    let dimDiagActions = [
+	    	<RaisedButton
+	        label="Close"
+	        secondary={true}
+	        onTouchTap={this.switchDimensionDiagState}
+	        style={{marginRight:20, marginBottom: 20}}
+	      />
+	    ];
+
+	    let handleSelect = function(dimension) {
+		  return function(event,index,value) {
+		  	let state = {};
+		  	state[dimension] = value;
+			me.setState(state);
+		  };
+		 };
+
+		let error = Math.max(this.state.m, this.state.n) < this.state.k;
+
+
 		return (
 
 
@@ -199,6 +231,42 @@ let Board = React.createClass({displayName: 'Board',
 			          onRequestClose={me.switchOpenState}
 			        >
 			        </Dialog>
+			        <Dialog
+			          title={"Set board Dimensions"}
+			          actions={dimDiagActions}
+			          autoDetectWindowHeight={true}
+			          modal={true}
+			          open={me.state.dim_open}
+			          onRequestClose={me.switchDimensionDiagState}
+			        >
+			        	<SelectField style={me.selectStyle} value={me.state.m} onChange={handleSelect('m')}>
+				          <MenuItem value={3} primaryText="3" />
+				          <MenuItem value={4} primaryText="4" />
+				          <MenuItem value={5} primaryText="5" />
+				          <MenuItem value={6} primaryText="6" />
+				          <MenuItem value={7} primaryText="7" />
+				        </SelectField>
+      					<SelectField style={me.selectStyle} value={me.state.n} onChange={handleSelect('n')}>
+				          <MenuItem value={3} primaryText="3" />
+				          <MenuItem value={4} primaryText="4" />
+				          <MenuItem value={5} primaryText="5" />
+				          <MenuItem value={6} primaryText="6" />
+				          <MenuItem value={7} primaryText="7" />
+				        </SelectField>
+				        <SelectField
+				        	style={me.selectStyle}
+				        	value={me.state.k}
+				        	onChange={handleSelect('k')}
+				        	errorText={error && 'K must be <= max(M,N)'}>
+
+				          <MenuItem value={3} primaryText="3" />
+				          <MenuItem value={4} primaryText="4" />
+				          <MenuItem value={5} primaryText="5" />
+				          <MenuItem value={6} primaryText="6" />
+				          <MenuItem value={7} primaryText="7" />
+				        </SelectField>
+			        </Dialog>
+
 				</div>
 
 			    <CardText>
@@ -212,8 +280,8 @@ let Board = React.createClass({displayName: 'Board',
 			      a few seconds since the instance needs to "wake up".
 			    </CardText>
 			    <CardActions>
-			      <RaisedButton label="Set Dimensions" primary={true}/>
-			      <RaisedButton label="Reset Board" secondary={true}/>
+			      <RaisedButton label="Set Dimensions" primary={true} onTouchTap={me.switchDimensionDiagState}/>
+			      <RaisedButton label="Reset Board" secondary={true} onTouchTap={function(){me.setState(me.getInitialState)}}/>
 			    </CardActions>
 			  </Card>
 
