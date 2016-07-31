@@ -62,11 +62,8 @@ let Board = React.createClass({displayName: 'Board',
 	boardStyle: {
 		width: 300,
 		height: 300,
-
-		position: 'absolute',
-        left:0, right:0,
-        top:0, bottom:0,
-        margin:'auto'
+		marginLeft:'auto',
+        marginRight:'auto'
 	},
 
 	cardStyle: {
@@ -77,8 +74,12 @@ let Board = React.createClass({displayName: 'Board',
 
 		position: 'absolute',
         left:0, right:0,
-        top:0, bottom:0,
-        margin:'auto'
+        top:0, bottom:0
+
+	},
+
+	boardAreaStyle : {
+		height: '100%'
 	},
 
 	selectStyle: {
@@ -156,8 +157,8 @@ let Board = React.createClass({displayName: 'Board',
 
 		// make api call to get computer move
 		var http = new XMLHttpRequest();
-		// var url = "http://127.0.0.1:5000/api/board"
-		var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
+		var url = "http://127.0.0.1:5000/api/board"
+		// var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
 
 		http.open("POST", url);
 		//Send the proper header information along with the request
@@ -246,50 +247,6 @@ let Board = React.createClass({displayName: 'Board',
 
 			<Card style={this.cardStyle} zDepth={5}>
 			    <CardTitle title="M,N,K Game AI Demo" subtitle="A generic AI" />
-
-			    <div style={this.boardStyle}>
-
-					{cells}
-
-					<RefreshIndicator
-						size={50}
-						left={-25}
-						top={300}
-						style={{marginLeft:"50%", pointerEvents:"none"}}
-						status={me.state.loader}/>
-
-					<Dialog
-			          title={this.state.winner}
-			          actions={actions}
-			          autoDetectWindowHeight={true}
-			          modal={true}
-			          open={me.state.open}
-			          onRequestClose={me.switchOpenState}>
-			        </Dialog>
-
-			        <Dialog
-			          title={"Set board Dimensions"}
-			          modalStyle={{width:'80%'}}
-			          actions={dimDiagActions}
-			          autoDetectWindowHeight={true}
-			          modal={true}
-			          open={me.state.dim_open}
-			          onRequestClose={me.switchDimensionDiagState}>
-			        	<SelectField style={me.selectStyle} value={me.state.m} onChange={handleSelect('m')}
-			        		floatingLabelText="Set a value for M">
-				          {menuItems}
-				        </SelectField>
-      					<SelectField style={me.selectStyle} value={me.state.n} onChange={handleSelect('n')}
-      						floatingLabelText="Set a value for N">
-				          {menuItems}
-				        </SelectField>
-				        <SelectField style={me.selectStyle} value={me.state.k} onChange={handleSelect('k')}
-				        	floatingLabelText="Set a value for K">
-				          {kItems}
-				        </SelectField>
-			        </Dialog>
-				</div>
-
 			    <CardText>
 			      Tic Tac Toe is an m, n, k game where M=N=K=3.
 			      With these parameters, the AI is unbeatable since
@@ -304,6 +261,51 @@ let Board = React.createClass({displayName: 'Board',
 			      <RaisedButton label="Set Dimensions" primary={true} onTouchTap={me.switchDimensionDiagState}/>
 			      <RaisedButton label="Reset Board" secondary={true} onTouchTap={function(){me.setState(me.getInitialState)}}/>
 			    </CardActions>
+
+			    <div style={this.boardAreaStyle}>
+				    <div style={this.boardStyle}>
+				    	{cells}
+						<RefreshIndicator
+							size={50}
+							left={-25}
+							top={300}
+							style={{marginLeft:"50%", pointerEvents:"none"}}
+							status={me.state.loader}/>
+
+						<Dialog
+				          title={this.state.winner}
+				          actions={actions}
+				          autoDetectWindowHeight={true}
+				          modal={true}
+				          open={me.state.open}
+				          onRequestClose={me.switchOpenState}>
+				        </Dialog>
+
+				        <Dialog
+				          title={"Set Board Dimensions"}
+				          modalStyle={{width:'80%'}}
+				          actions={dimDiagActions}
+				          autoDetectWindowHeight={true}
+				          modal={true}
+				          open={me.state.dim_open}
+				          onRequestClose={me.switchDimensionDiagState}>
+				        	<SelectField style={me.selectStyle} value={me.state.m} onChange={handleSelect('m')}
+				        		floatingLabelText="Set a value for M">
+					          {menuItems}
+					        </SelectField>
+	      					<SelectField style={me.selectStyle} value={me.state.n} onChange={handleSelect('n')}
+	      						floatingLabelText="Set a value for N">
+					          {menuItems}
+					        </SelectField>
+					        <SelectField style={me.selectStyle} value={me.state.k} onChange={handleSelect('k')}
+					        	floatingLabelText="Set a value for K">
+					          {kItems}
+					        </SelectField>
+				        </Dialog>
+					</div>
+				</div>
+
+
 			  </Card>
 
 		);

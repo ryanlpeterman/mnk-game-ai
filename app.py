@@ -34,7 +34,7 @@ def getMove():
         if result== 2:
             response["winner"] = "Cat's Game"
         elif result== 0:
-            response["winner"] = "You win!"
+            response["winner"] = "You Win!"
 
         return json.dumps(response)
     else:
@@ -45,7 +45,7 @@ def getMove():
 
     # if move caused win for computer
     if curr_brd.isOver() == 1:
-        response["winner"] = "Computer wins!"
+        response["winner"] = "Computer Wins!"
 
     response["row"] = row
     response["col"] = col

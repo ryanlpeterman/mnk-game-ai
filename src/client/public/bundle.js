@@ -22124,11 +22124,8 @@
 		boardStyle: {
 			width: 300,
 			height: 300,
-	
-			position: 'absolute',
-			left: 0, right: 0,
-			top: 0, bottom: 0,
-			margin: 'auto'
+			marginLeft: 'auto',
+			marginRight: 'auto'
 		},
 	
 		cardStyle: {
@@ -22139,8 +22136,12 @@
 	
 			position: 'absolute',
 			left: 0, right: 0,
-			top: 0, bottom: 0,
-			margin: 'auto'
+			top: 0, bottom: 0
+	
+		},
+	
+		boardAreaStyle: {
+			height: '100%'
 		},
 	
 		selectStyle: {
@@ -22208,8 +22209,8 @@
 	
 			// make api call to get computer move
 			var http = new XMLHttpRequest();
-			// var url = "http://127.0.0.1:5000/api/board"
-			var url = "https://tic-tac-toe-ai.herokuapp.com/api/board";
+			var url = "http://127.0.0.1:5000/api/board";
+			// var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
 	
 			http.open("POST", url);
 			//Send the proper header information along with the request
@@ -22289,53 +22290,6 @@
 				{ style: this.cardStyle, zDepth: 5 },
 				_react2.default.createElement(_Card.CardTitle, { title: 'M,N,K Game AI Demo', subtitle: 'A generic AI' }),
 				_react2.default.createElement(
-					'div',
-					{ style: this.boardStyle },
-					cells,
-					_react2.default.createElement(_RefreshIndicator2.default, {
-						size: 50,
-						left: -25,
-						top: 300,
-						style: { marginLeft: "50%", pointerEvents: "none" },
-						status: me.state.loader }),
-					_react2.default.createElement(_Dialog2.default, {
-						title: this.state.winner,
-						actions: actions,
-						autoDetectWindowHeight: true,
-						modal: true,
-						open: me.state.open,
-						onRequestClose: me.switchOpenState }),
-					_react2.default.createElement(
-						_Dialog2.default,
-						{
-							title: "Set board Dimensions",
-							modalStyle: { width: '80%' },
-							actions: dimDiagActions,
-							autoDetectWindowHeight: true,
-							modal: true,
-							open: me.state.dim_open,
-							onRequestClose: me.switchDimensionDiagState },
-						_react2.default.createElement(
-							_SelectField2.default,
-							{ style: me.selectStyle, value: me.state.m, onChange: handleSelect('m'),
-								floatingLabelText: 'Set a value for M' },
-							menuItems
-						),
-						_react2.default.createElement(
-							_SelectField2.default,
-							{ style: me.selectStyle, value: me.state.n, onChange: handleSelect('n'),
-								floatingLabelText: 'Set a value for N' },
-							menuItems
-						),
-						_react2.default.createElement(
-							_SelectField2.default,
-							{ style: me.selectStyle, value: me.state.k, onChange: handleSelect('k'),
-								floatingLabelText: 'Set a value for K' },
-							kItems
-						)
-					)
-				),
-				_react2.default.createElement(
 					_Card.CardText,
 					null,
 					'Tic Tac Toe is an m, n, k game where M=N=K=3. With these parameters, the AI is unbeatable since the AI can search the entire search space in less than a second when alpha-beta pruning is implemented.',
@@ -22349,6 +22303,57 @@
 					_react2.default.createElement(_RaisedButton2.default, { label: 'Reset Board', secondary: true, onTouchTap: function onTouchTap() {
 							me.setState(me.getInitialState);
 						} })
+				),
+				_react2.default.createElement(
+					'div',
+					{ style: this.boardAreaStyle },
+					_react2.default.createElement(
+						'div',
+						{ style: this.boardStyle },
+						cells,
+						_react2.default.createElement(_RefreshIndicator2.default, {
+							size: 50,
+							left: -25,
+							top: 300,
+							style: { marginLeft: "50%", pointerEvents: "none" },
+							status: me.state.loader }),
+						_react2.default.createElement(_Dialog2.default, {
+							title: this.state.winner,
+							actions: actions,
+							autoDetectWindowHeight: true,
+							modal: true,
+							open: me.state.open,
+							onRequestClose: me.switchOpenState }),
+						_react2.default.createElement(
+							_Dialog2.default,
+							{
+								title: "Set Board Dimensions",
+								modalStyle: { width: '80%' },
+								actions: dimDiagActions,
+								autoDetectWindowHeight: true,
+								modal: true,
+								open: me.state.dim_open,
+								onRequestClose: me.switchDimensionDiagState },
+							_react2.default.createElement(
+								_SelectField2.default,
+								{ style: me.selectStyle, value: me.state.m, onChange: handleSelect('m'),
+									floatingLabelText: 'Set a value for M' },
+								menuItems
+							),
+							_react2.default.createElement(
+								_SelectField2.default,
+								{ style: me.selectStyle, value: me.state.n, onChange: handleSelect('n'),
+									floatingLabelText: 'Set a value for N' },
+								menuItems
+							),
+							_react2.default.createElement(
+								_SelectField2.default,
+								{ style: me.selectStyle, value: me.state.k, onChange: handleSelect('k'),
+									floatingLabelText: 'Set a value for K' },
+								kItems
+							)
+						)
+					)
 				)
 			);
 		}
