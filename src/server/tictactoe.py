@@ -21,7 +21,7 @@ def game(player1_type, player2_type, num_games=1):
 
     for _ in range(0, num_games):
 
-        brd = board.Board()
+        brd = board.Board(3, 4, 3)
 
         # ref to current player
         curr_player = player1
