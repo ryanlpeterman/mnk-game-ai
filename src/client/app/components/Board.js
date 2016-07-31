@@ -82,8 +82,7 @@ let Board = React.createClass({displayName: 'Board',
 	},
 
 	selectStyle: {
-		width: '40%',
-		display: 'block'
+		width: '90%',
 	},
 
 	childContextTypes:{
@@ -103,7 +102,25 @@ let Board = React.createClass({displayName: 'Board',
 		this.setState({dim_open: !(this.state.dim_open)});
 	},
 
+	setNewBoardDim : function() {
+		let newBoard = [];
+
+		for (let i = 0; i < this.state.m * this.state.n; i++) {
+			newBoard.push(' ');
+		}
+
+		this.boardStyle['width'] = this.state.m * 100;
+
+		this.setState({
+			dim_open:  !(this.state.dim_open),
+			board: newBoard,
+			winner: undefined,
+		})
+	},
+
 	getInitialState: function() {
+		this.boardStyle['width'] = 300;
+
 		return {
 			board: [ ' ', ' ', ' '
 					,' ', ' ', ' '
@@ -165,7 +182,10 @@ let Board = React.createClass({displayName: 'Board',
 		    }
 		}
 
-		http.send("board=" + JSON.stringify(int_board) + "&M=3&N=3&K=3");
+		http.send("board=" + JSON.stringify(int_board) +
+				"&M=" + this.state.m +
+				"&N=" + this.state.n +
+				"&K=" + this.state.k);
 	},
 
 	render: function() {
@@ -193,6 +213,12 @@ let Board = React.createClass({displayName: 'Board',
 	        secondary={true}
 	        onTouchTap={this.switchDimensionDiagState}
 	        style={{marginRight:20, marginBottom: 20}}
+	      />,
+	      <RaisedButton
+	        label="Set"
+	        primary={true}
+	        onTouchTap={this.setNewBoardDim}
+	        style={{marginRight:20, marginBottom: 20}}
 	      />
 	    ];
 
@@ -205,7 +231,15 @@ let Board = React.createClass({displayName: 'Board',
 		 };
 
 		let error = Math.max(this.state.m, this.state.n) < this.state.k;
+		let menuItems = [];
+		for(let i = 3; i < 8; i++) {
+			menuItems.push(<MenuItem value={i} primaryText={String(i)} />)
+		}
 
+		let kItems = [];
+		for(let i = 3; i <= Math.min(this.state.m, this.state.n); i++){
+			kItems.push(<MenuItem value={i} primaryText={String(i)} />)
+		}
 
 		return (
 
@@ -214,59 +248,46 @@ let Board = React.createClass({displayName: 'Board',
 			    <CardTitle title="M,N,K Game AI Demo" subtitle="A generic AI" />
 
 			    <div style={this.boardStyle}>
+
 					{cells}
+
 					<RefreshIndicator
 						size={50}
 						left={-25}
 						top={300}
 						style={{marginLeft:"50%", pointerEvents:"none"}}
-						status={me.state.loader}
-					/>
+						status={me.state.loader}/>
+
 					<Dialog
 			          title={this.state.winner}
 			          actions={actions}
 			          autoDetectWindowHeight={true}
 			          modal={true}
 			          open={me.state.open}
-			          onRequestClose={me.switchOpenState}
-			        >
+			          onRequestClose={me.switchOpenState}>
 			        </Dialog>
+
 			        <Dialog
 			          title={"Set board Dimensions"}
+			          modalStyle={{width:'80%'}}
 			          actions={dimDiagActions}
 			          autoDetectWindowHeight={true}
 			          modal={true}
 			          open={me.state.dim_open}
-			          onRequestClose={me.switchDimensionDiagState}
-			        >
-			        	<SelectField style={me.selectStyle} value={me.state.m} onChange={handleSelect('m')}>
-				          <MenuItem value={3} primaryText="3" />
-				          <MenuItem value={4} primaryText="4" />
-				          <MenuItem value={5} primaryText="5" />
-				          <MenuItem value={6} primaryText="6" />
-				          <MenuItem value={7} primaryText="7" />
+			          onRequestClose={me.switchDimensionDiagState}>
+			        	<SelectField style={me.selectStyle} value={me.state.m} onChange={handleSelect('m')}
+			        		floatingLabelText="Set a value for M">
+				          {menuItems}
 				        </SelectField>
-      					<SelectField style={me.selectStyle} value={me.state.n} onChange={handleSelect('n')}>
-				          <MenuItem value={3} primaryText="3" />
-				          <MenuItem value={4} primaryText="4" />
-				          <MenuItem value={5} primaryText="5" />
-				          <MenuItem value={6} primaryText="6" />
-				          <MenuItem value={7} primaryText="7" />
+      					<SelectField style={me.selectStyle} value={me.state.n} onChange={handleSelect('n')}
+      						floatingLabelText="Set a value for N">
+				          {menuItems}
 				        </SelectField>
-				        <SelectField
-				        	style={me.selectStyle}
-				        	value={me.state.k}
-				        	onChange={handleSelect('k')}
-				        	errorText={error && 'K must be <= max(M,N)'}>
-
-				          <MenuItem value={3} primaryText="3" />
-				          <MenuItem value={4} primaryText="4" />
-				          <MenuItem value={5} primaryText="5" />
-				          <MenuItem value={6} primaryText="6" />
-				          <MenuItem value={7} primaryText="7" />
+				        <SelectField style={me.selectStyle} value={me.state.k} onChange={handleSelect('k')}
+				        	floatingLabelText="Set a value for K">
+				          {kItems}
 				        </SelectField>
 			        </Dialog>
-
 				</div>
 
 			    <CardText>
