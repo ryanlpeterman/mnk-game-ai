@@ -22,10 +22,12 @@ def getMove():
     # board passed in from post req
     curr_brd = brd.Board(json.loads(request.form['board']),
             int(request.form['M']), int(request.form['N']), int(request.form['K']))
-
+    print "Received Board:"
+    print json.loads(request.form['board'])
+    print "M =",request.form['M'], "N =", request.form['N']
     response = {"row": -1, "col": -1}
     result = curr_brd.isOver()
-    print "result:", result
+
 
     # game is over
     if result != -1:

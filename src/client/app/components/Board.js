@@ -156,8 +156,8 @@ let Board = React.createClass({displayName: 'Board',
 
 		// make api call to get computer move
 		var http = new XMLHttpRequest();
-		var url = "http://127.0.0.1:5000/api/board"
-		// var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
+		// var url = "http://127.0.0.1:5000/api/board"
+		var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
 
 		http.open("POST", url);
 		//Send the proper header information along with the request
@@ -237,7 +237,7 @@ let Board = React.createClass({displayName: 'Board',
 		}
 
 		let kItems = [];
-		for(let i = 3; i <= Math.min(this.state.m, this.state.n); i++){
+		for(let i = 3; i <= Math.max(this.state.m, this.state.n); i++){
 			kItems.push(<MenuItem value={i} primaryText={String(i)} />)
 		}
 
@@ -295,7 +295,7 @@ let Board = React.createClass({displayName: 'Board',
 			      With these parameters, the AI is unbeatable since
 			      the AI can search the entire search space in less
 			      than a second when alpha-beta pruning is implemented.
-
+			      <br/>
 			      Note: since we are using a free Heroku instance to
 			      the backend computation engine, the first move will take
 			      a few seconds since the instance needs to "wake up".

@@ -22208,8 +22208,8 @@
 	
 			// make api call to get computer move
 			var http = new XMLHttpRequest();
-			var url = "http://127.0.0.1:5000/api/board";
-			// var url = "https://tic-tac-toe-ai.herokuapp.com/api/board"
+			// var url = "http://127.0.0.1:5000/api/board"
+			var url = "https://tic-tac-toe-ai.herokuapp.com/api/board";
 	
 			http.open("POST", url);
 			//Send the proper header information along with the request
@@ -22280,7 +22280,7 @@
 			}
 	
 			var kItems = [];
-			for (var _i = 3; _i <= Math.min(this.state.m, this.state.n); _i++) {
+			for (var _i = 3; _i <= Math.max(this.state.m, this.state.n); _i++) {
 				kItems.push(_react2.default.createElement(_MenuItem2.default, { value: _i, primaryText: String(_i) }));
 			}
 	
@@ -22338,7 +22338,9 @@
 				_react2.default.createElement(
 					_Card.CardText,
 					null,
-					'Tic Tac Toe is an m, n, k game where M=N=K=3. With these parameters, the AI is unbeatable since the AI can search the entire search space in less than a second when alpha-beta pruning is implemented. Note: since we are using a free Heroku instance to the backend computation engine, the first move will take a few seconds since the instance needs to "wake up".'
+					'Tic Tac Toe is an m, n, k game where M=N=K=3. With these parameters, the AI is unbeatable since the AI can search the entire search space in less than a second when alpha-beta pruning is implemented.',
+					_react2.default.createElement('br', null),
+					'Note: since we are using a free Heroku instance to the backend computation engine, the first move will take a few seconds since the instance needs to "wake up".'
 				),
 				_react2.default.createElement(
 					_Card.CardActions,
