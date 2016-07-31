@@ -8,7 +8,7 @@ import numpy as np
 class Board:
     """
     maintains board state as a numpy int array where:
-        -1 -> blank
+        -1 -> blakn
         0  -> player 1 mark
      	1  -> player 2 mark
     """
@@ -29,7 +29,7 @@ class Board:
             self.board = np.zeros(shape=(self.M, self.N))
             self.board.fill(-1)
 
-        elif len(args) == 4: #i'm expecting a completed board 
+        elif len(args) == 4: #i'm expecting a completed board
             self.M, self.N, self.K = args[1], args[2], args[3]
             self.board = np.array(args[0]).reshape((self.M, self.N))
 
@@ -107,16 +107,16 @@ class Board:
         if catscnt == subboardcnt:
             return 2
         return -1 #nobody won and it's not a cat's game
-                
+
 
     def checkSquare(self, board):
         """
         returns element causing game over or 2 if cats game
         """
-		
+
         CATS_GAME = 2
         GAME_ONGOING = -1
-        
+
         # checks if everything in a row is the same
         check_func = lambda arr: arr[0] != -1 and all(elem == arr[0] for elem in arr)
 

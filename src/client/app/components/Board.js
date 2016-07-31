@@ -2,9 +2,8 @@ import React from 'react';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
-
-// potentially remove this
-import Paper from 'material-ui/Paper';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
@@ -82,6 +81,10 @@ let Board = React.createClass({displayName: 'Board',
         margin:'auto'
 	},
 
+	selectStyle: {
+		width: '90%',
+	},
+
 	childContextTypes:{
 		muiTheme: React.PropTypes.object.isRequired,
 	},
@@ -95,20 +98,46 @@ let Board = React.createClass({displayName: 'Board',
 		this.setState({open: !(this.state.open)});
 	},
 
+	switchDimensionDiagState : function() {
+		this.setState({dim_open: !(this.state.dim_open)});
+	},
+
+	setNewBoardDim : function() {
+		let newBoard = [];
+
+		for (let i = 0; i < this.state.m * this.state.n; i++) {
+			newBoard.push(' ');
+		}
+
+		this.boardStyle['width'] = this.state.m * 100;
+
+		this.setState({
+			dim_open:  !(this.state.dim_open),
+			board: newBoard,
+			winner: undefined,
+		})
+	},
+
 	getInitialState: function() {
+		this.boardStyle['width'] = 300;
+
 		return {
 			board: [ ' ', ' ', ' '
 					,' ', ' ', ' '
 					,' ', ' ', ' '],
 			loader: 'hide',
 			open: false,
-			winner: undefined}
+			dim_open: false,
+			winner: undefined,
+			m: 3,
+			n: 3,
+			k: 3}
 	},
 
 	updateBoard : function (idx) {
 
 		// if board is loading, throw away click
-		if (this.state.loader === 'loading')
+		if (this.state.loader === 'loading' || this.state.winner !== undefined)
 			return;
 		var board = this.state.board;
 		board[idx] = humanMark;
@@ -153,7 +182,10 @@ let Board = React.createClass({displayName: 'Board',
 		    }
 		}
 
-		http.send("board=" + JSON.stringify(int_board));
+		http.send("board=" + JSON.stringify(int_board) +
+				"&M=" + this.state.m +
+				"&N=" + this.state.n +
+				"&K=" + this.state.k);
 	},
 
 	render: function() {
@@ -167,7 +199,7 @@ let Board = React.createClass({displayName: 'Board',
 		// prepare cells
 		let cells = this.state.board.map(createCellFunc);
 
-		var actions = [
+		let actions = [
 	      <RaisedButton
 	        label="Close"
 	        secondary={true}
@@ -175,6 +207,40 @@ let Board = React.createClass({displayName: 'Board',
 	        style={{marginRight:20, marginBottom: 20}}
 	      />
 	    ];
+	    let dimDiagActions = [
+	    	<RaisedButton
+	        label="Close"
+	        secondary={true}
+	        onTouchTap={this.switchDimensionDiagState}
+	        style={{marginRight:20, marginBottom: 20}}
+	      />,
+	      <RaisedButton
+	        label="Set"
+	        primary={true}
+	        onTouchTap={this.setNewBoardDim}
+	        style={{marginRight:20, marginBottom: 20}}
+	      />
+	    ];
+
+	    let handleSelect = function(dimension) {
+		  return function(event,index,value) {
+		  	let state = {};
+		  	state[dimension] = value;
+			me.setState(state);
+		  };
+		 };
+
+		let error = Math.max(this.state.m, this.state.n) < this.state.k;
+		let menuItems = [];
+		for(let i = 3; i < 8; i++) {
+			menuItems.push(<MenuItem value={i} primaryText={String(i)} />)
+		}
+
+		let kItems = [];
+		for(let i = 3; i <= Math.max(this.state.m, this.state.n); i++){
+			kItems.push(<MenuItem value={i} primaryText={String(i)} />)
+		}
+
 		return (
 
 
@@ -182,22 +248,45 @@ let Board = React.createClass({displayName: 'Board',
 			    <CardTitle title="M,N,K Game AI Demo" subtitle="A generic AI" />
 
 			    <div style={this.boardStyle}>
+
 					{cells}
+
 					<RefreshIndicator
 						size={50}
 						left={-25}
 						top={300}
 						style={{marginLeft:"50%", pointerEvents:"none"}}
-						status={me.state.loader}
-					/>
+						status={me.state.loader}/>
+
 					<Dialog
 			          title={this.state.winner}
 			          actions={actions}
 			          autoDetectWindowHeight={true}
 			          modal={true}
 			          open={me.state.open}
-			          onRequestClose={me.switchOpenState}
-			        >
+			          onRequestClose={me.switchOpenState}>
+			        </Dialog>
+
+			        <Dialog
+			          title={"Set board Dimensions"}
+			          modalStyle={{width:'80%'}}
+			          actions={dimDiagActions}
+			          autoDetectWindowHeight={true}
+			          modal={true}
+			          open={me.state.dim_open}
+			          onRequestClose={me.switchDimensionDiagState}>
+			        	<SelectField style={me.selectStyle} value={me.state.m} onChange={handleSelect('m')}
+			        		floatingLabelText="Set a value for M">
+				          {menuItems}
+				        </SelectField>
+      					<SelectField style={me.selectStyle} value={me.state.n} onChange={handleSelect('n')}
+      						floatingLabelText="Set a value for N">
+				          {menuItems}
+				        </SelectField>
+				        <SelectField style={me.selectStyle} value={me.state.k} onChange={handleSelect('k')}
+				        	floatingLabelText="Set a value for K">
+				          {kItems}
+				        </SelectField>
 			        </Dialog>
 				</div>
 
@@ -206,14 +295,14 @@ let Board = React.createClass({displayName: 'Board',
 			      With these parameters, the AI is unbeatable since
 			      the AI can search the entire search space in less
 			      than a second when alpha-beta pruning is implemented.
-
+			      <br/>
 			      Note: since we are using a free Heroku instance to
 			      the backend computation engine, the first move will take
 			      a few seconds since the instance needs to "wake up".
 			    </CardText>
 			    <CardActions>
-			      <RaisedButton label="Set Dimensions" primary={true}/>
-			      <RaisedButton label="Reset Board" secondary={true}/>
+			      <RaisedButton label="Set Dimensions" primary={true} onTouchTap={me.switchDimensionDiagState}/>
+			      <RaisedButton label="Reset Board" secondary={true} onTouchTap={function(){me.setState(me.getInitialState)}}/>
 			    </CardActions>
 			  </Card>
 
