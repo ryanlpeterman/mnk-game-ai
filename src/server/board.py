@@ -92,17 +92,19 @@ class Board:
         """
         checks all iterations of the board to see if it's finished
         """
-        catsgame = True #keeping track of if all the subboards that are cat's game'd
+        catscnt = 0 #keeping track of if all the subboards that are cat's game'd
+        subboardcnt = 0
         tempboard = np.zeros(shape=(self.K,self.K)) #temp square board to check game
         for i in xrange(self.K, self.M + 1):
             for j in xrange(self.K, self.N + 1):
                 tempboard = self.board[i-self.K:i,j-self.K:j]
                 ret = self.checkSquare(tempboard)
-                if ret != 2:
-                    catsgame = False #if any subboard returns a non-cat's game, it's not over
+                subboardcnt = subboardcnt + 1
+                if ret == 2:
+                    catscnt = catscnt + 1 #if any subboard returns a non-cat's game, it's not over
                 if ret != 2 and ret != -1:
                     return ret #one of the players won the sub array
-        if catsgame == True:
+        if catscnt == subboardcnt:
             return 2
         return -1 #nobody won and it's not a cat's game
                 
