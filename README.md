@@ -7,7 +7,7 @@ AI for a generic m,n,k game written in Python by Ryan Peterman and Scott Shi. Us
 ```
 $ python tic-tac-toe.py
 ```
-* From web: [Current Link Here](http://www.rpeterman.me)
+* From web: [Current Link Here](http://rpeterman.me/mnk-game-ai/)
 
 ## Project file structure
 
