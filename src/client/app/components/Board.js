@@ -4,6 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import Snackbar from 'material-ui/Snackbar';
 
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
@@ -99,6 +100,10 @@ let Board = React.createClass({displayName: 'Board',
 		this.setState({open: !(this.state.open)});
 	},
 
+	switchWakeState : function() {
+		this.setState({wake: !(this.state.wake)});
+	},
+
 	switchDimensionDiagState : function() {
 		this.setState({dim_open: !(this.state.dim_open)});
 	},
@@ -121,18 +126,19 @@ let Board = React.createClass({displayName: 'Board',
 
 	getInitialState: function() {
 		this.boardStyle['width'] = 300;
-
+        this.wakeHeroku();
 		return {
 			board: [ ' ', ' ', ' '
 					,' ', ' ', ' '
 					,' ', ' ', ' '],
-			loader: 'hide',
+			loader: 'loading',
 			open: false,
 			dim_open: false,
 			winner: undefined,
 			m: 3,
 			n: 3,
-			k: 3}
+			k: 3,
+			wake: true}
 	},
 
 	updateBoard : function (idx) {
@@ -164,32 +170,43 @@ let Board = React.createClass({displayName: 'Board',
 		//Send the proper header information along with the request
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		http.setRequestHeader("Access-Control-Allow-Origin", "*");
-		var me = this;
 		http.onreadystatechange = function() {//Call a function when the state changes.
 		    if(http.readyState == 4 && http.status == 200) {
 		        let res = JSON.parse(http.responseText);
 
 		        // if valid move passed back then update views
 		        if (res.row != -1 && res.col != -1) {
-			        let board = me.state.board;
+			        let board = this.state.board;
 			        board[res.col + res.row*3] = computerMark;
-			        me.setState({board: board, loader:'hide'});
+			        this.setState({board: board, loader:'hide'});
 		    	}
 
 		    	// if winner was declared, declare it
 		        if(res.winner != undefined){
-		        	me.setState({board: me.state.board, loader:'hide', open: true, winner: res.winner});
+		        	this.setState({board: this.state.board, loader:'hide', open: true, winner: res.winner});
 		        }
 		    }
-		}
+		}.bind(this);
 
 		http.send("board=" + JSON.stringify(int_board) +
 				"&M=" + this.state.m +
 				"&N=" + this.state.n +
 				"&K=" + this.state.k);
 	},
+    wakeHeroku : function() {
+        var http = new XMLHttpRequest();
+		var url = "https://tic-tac-toe-ai.herokuapp.com/"
+        http.open("GET", url);
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                this.setState({loader:'hide', wake: false});
+            }
+        }.bind(this);
 
-	render: function() {
+        http.send();
+    },
+	
+    render: function() {
 		let me = this;
 
 		let createCellFunc = function(tic, idx) {
@@ -251,15 +268,14 @@ let Board = React.createClass({displayName: 'Board',
 			      Tic Tac Toe is an m, n, k game where M=N=K=3.
 			      With these parameters, the AI is unbeatable since
 			      the AI can search the entire search space in less
-			      than a second when alpha-beta pruning is implemented.
-			      <br/>
-			      Note: since we are using a free Heroku instance to
-			      the backend computation engine, the first move will take
-			      a few seconds since the instance needs to "wake up".
+			      than a second after alpha-beta pruning was implemented.
+				  <br/>	  
+				  Note: Free version of Heroku instance needs time to wake
 			    </CardText>
 			    <CardActions>
-			      <RaisedButton label="Set Dimensions" primary={true} onTouchTap={me.switchDimensionDiagState}/>
-			      <RaisedButton label="Reset Board" secondary={true} onTouchTap={function(){me.setState(me.getInitialState)}}/>
+                {/* TODO: Not supported by backend yet
+                    <RaisedButton label="Set Dimensions" primary={true} onTouchTap={me.switchDimensionDiagState}/>*/}
+                    <RaisedButton label="Reset Board" primary={true} onTouchTap={function(){me.setState(me.getInitialState)}}/>
 			    </CardActions>
 
 			    <div style={this.boardAreaStyle}>
@@ -271,7 +287,11 @@ let Board = React.createClass({displayName: 'Board',
 							top={300}
 							style={{marginLeft:"50%", pointerEvents:"none"}}
 							status={me.state.loader}/>
-
+						<Snackbar
+						  open={me.state.wake}
+						  message="Waking Heroku Instance..."
+						  onRequestClose={me.switchWakeState}
+						/>
 						<Dialog
 				          title={this.state.winner}
 				          actions={actions}
